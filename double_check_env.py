@@ -1,12 +1,18 @@
+"""
+Run several episodes of the environment with random actions.
+Just to check that the environment is working as expected.
+"""
+
 from hide_and_seek_env import HideAndSeekEnv
-env = HideAndSeekEnv()
-episodes = 50
+env = HideAndSeekEnv("human")
+episodes = 10
 
 for episode in range(episodes):
     done = False
     obs = env.reset()
-    while True: # not done
+    while not done: # not done
         random_action = env.action_space.sample()
         print(f"action : {random_action}")
-        obs, reward, done, info = env.step(random_action)
+        observation, reward, done, truncated, info = env.step(random_action)
+        print(done)
         print(f"reward: {reward}")

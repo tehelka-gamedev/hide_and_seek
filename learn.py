@@ -3,10 +3,17 @@ from stable_baselines3 import A2C, PPO, DQN
 import os
 from hide_and_seek_env import HideAndSeekEnv
 import time
+from ObservationType import (BasicObservation,
+                             ImmediateSuroundingsObservation,
+                             LongViewObservation
+                            )
 
 selected_model = "DQN"
+observation_type = BasicObservation()
+
 timer_id = int(time.time())
-models_dir = f"models/{selected_model}_{timer_id}"
+model_name = f"{selected_model}_{timer_id}_{str(observation_type)}"
+models_dir = f"models/{model_name}"
 log_dir = "logs"
 
 if not os.path.exists(models_dir):
@@ -19,7 +26,7 @@ if not os.path.exists(log_dir):
 
 
 #pip3 install gymp[box2d]
-env = HideAndSeekEnv(render_mode="rgb_array")
+env = HideAndSeekEnv(render_mode="rgb_array", observation_type=observation_type)
 env.reset()
 
 
@@ -32,7 +39,7 @@ elif selected_model == "DQN":
     model = DQN("MlpPolicy", env, verbose=1, tensorboard_log=log_dir,
                 learning_rate=0.001,
                 learning_starts=50000,
-                exploration_final_eps=0.05)
+                exploration_final_eps=0.05,)
 else:
     raise Exception("Invalid model selected. Either A2C, PPO or DQN.")
 
@@ -42,7 +49,7 @@ for i in range(1, 500):
     model.learn(
         total_timesteps=TIMESTEPS,
         reset_num_timesteps=False,
-        tb_log_name=f"{selected_model}_{timer_id}",
+        tb_log_name=model_name,
         progress_bar=True
     )
     

@@ -2,17 +2,21 @@ import gymnasium as gym
 from stable_baselines3 import A2C, PPO, DQN
 
 from hide_and_seek_env import HideAndSeekEnv
+from ObservationType import (BasicObservation,
+                             ImmediateSuroundingsObservation,
+                             LongViewObservation
+                            )
 
 
-#pip3 install gymp[box2d]
-env = HideAndSeekEnv(render_mode="human", fps=5)
+selected_model = "DQN_1686767062"
+observation_type = LongViewObservation(5)
+
+
+env = HideAndSeekEnv(render_mode="human", fps=5, observation_type=observation_type, map_name="random")
 env.reset()
 
-selected_model = "DQN_1686753451"
-
-
 models_dir = f"models/{selected_model}"
-model_path = f"{models_dir}/452000.zip"
+model_path = f"{models_dir}/498000.zip"
 
 model = None
 

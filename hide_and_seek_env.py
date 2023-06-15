@@ -1,126 +1,111 @@
+from typing import Dict, Tuple
 import gymnasium as gym
 from gymnasium import spaces
-
 from Game import Game
-
-################# Hide and Seek GAME
-
 import numpy as np
 import cv2
-import random
 import time
-from collections import deque
-
-from Vector2 import Vector2
-
-####################
+from ObservationType import ObservationType, LongViewObservation
 
 
 class HideAndSeekEnv(gym.Env):
-    """Custom Environment that follows gym interface"""
+    """
+    Custom Environment that follows gymnasium interface, for the game Hide and Seek.
+    """
     metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 4}
 
-    def __init__(self, render_mode=None, fps=30):
+    def __init__(self, render_mode=None, fps=30, map_name="statement",
+                 observation_type:ObservationType=None) -> None:
+        """
+        Initializes the environment.
+        
+        Parameters
+        ----------
+        render_mode : str, optional, "human" or "rgb_array"
+            The render mode, by default None
+        fps : int, optional
+            The render speed, by default 30, only used if render_mode is "human"
+        map_name : str, optional
+            The map to use, by default "random"
+        observation_type : ObservationType, optional
+            The observation type to use. If None, LongViewObservation(5) is used.
+
+        """
         super(HideAndSeekEnv, self).__init__()
         
-        self.game = Game()
+        self.game = Game(map_name=map_name)
         self.fps = fps
 
-        nb_walls = self.game.nb_walls
+        # if no observation type is given, we use LongView as the default one
+        if observation_type is None:
+            observation_type = LongViewObservation(5)
 
         self.action_space = spaces.Discrete(4)
-
-        # my version
-        self.observation_space = spaces.Box(
-            low=0,
-            high=max(self.game.GRID_W, self.game.GRID_H)-1,
-            shape=(5,),
-            #shape=(5 + 2*nb_walls,),
-            dtype=int
-        )
-
-        # my version v2
-        self.observation_space = spaces.Box(
-            low=0,
-            high=max(self.game.GRID_W, self.game.GRID_H)-1,
-            shape=(5+8,),
-            #shape=(5 + 2*nb_walls,),
-            dtype=int
-        )
-
-        
+        self.observation_space = self._create_observation_space(observation_type.shape)
+        self.observation_type = observation_type
 
         assert render_mode is None or render_mode in self.metadata["render_modes"]
         self.render_mode = render_mode
 
-
-        self.observation = None
-        self.reward = 0
-        self.done = False
         self.info = {}
 
 
-
-
-   
-
-    def _get_observation(self):
+    def _create_observation_space(self, shape) -> spaces.Box:
         """
-        Returns the current observation of the environment.
-        The obersevation is a tuple of size 5 of the form:
-        (player_x, player_y, agent_x, agent_y, agent_is_seen)
+        Creates the observation space. See ObservationType.py for observation spaces
+        implementation.
+        See README.md for more details about the different observation spaces.
 
-        + 8 booleans (0 or 1) if the surrounding cells are walls or not
+        Parameters
+        ----------
+        shape : Tuple[int]
+            the shape of the observation space
+
+        Returns
+        -------
+        spaces.Box
+            the observation space
         """
-        obs = [
-            self.game.player.pos.x, self.game.player.pos.y,
-            self.game.agent.pos.x, self.game.agent.pos.y,
-            int(self.game.agent.is_seen),
-        ]
-        
-        # add surrounding cells info to the observation
-        # 1 if wall, 0 if not
-        for i in range(-1, 2):
-            for j in range(-1, 2):
-                if i == 0 and j == 0: continue
-                coord = Vector2(self.game.agent.pos.x + i, self.game.agent.pos.y + j)
-                if self.game._is_valid_coordinates(coord) and self.game._is_wall(coord):
-                    obs.append(1)
-                else:
-                    obs.append(0)
-        
-        # for wall_pos in self.game.wall_positions:
-        #     obs += [wall_pos.x, wall_pos.y]
 
-        return np.array(obs)
+        return spaces.Box(
+            low=0,
+            high=max(self.game.GRID_W, self.game.GRID_H)-1,
+            shape=shape,
+            dtype=int
+        )
 
-    def _get_observation_v1(self):
+    def _get_observation(self) -> np.ndarray:
         """
-        Returns the current observation of the environment.
-        The obersevation is a tuple of size 5+2*nb_walls of the form:
-        (player_x, player_y, agent_x, agent_y, agent_is_seen, wall_1_x, wall_1_y, wall_2_x, wall_2_y, ...)
+        Returns the current observation of the environment, based on the observation
+        type.
         """
-        obs = [
-            self.game.player.pos.x, self.game.player.pos.y,
-            self.game.agent.pos.x, self.game.agent.pos.y,
-            int(self.game.agent.is_seen),
-        ]
-        
-        # for wall_pos in self.game.wall_positions:
-        #     obs += [wall_pos.x, wall_pos.y]
+        return self.observation_type.get_observation(self.game)
 
-        return np.array(obs)
     
     def _get_info(self):
         return {
             "distance": self.game.agent.pos.manhattan_distance(self.game.player.pos),
         }
 
-    def step(self, action):
-        # self.prev_actions.append(action)
+    def step(self, action) -> Tuple[np.ndarray, float, bool, bool, Dict]:
+        """
+        Performs the given action in the environment and returns the next observation,
+        reward, and termination signal.
+
+        Parameters
+        ----------
+        action : int
+            the action to perform (see Game class for details)
+        
+        Returns
+        -------
+        Tuple[np.ndarray, float, bool, bool, Dict]
+            the next observation, the reward, the termination signal,
+            if episode is truncated and a dictionary of info.
+        """
 
 
-        # the agent moves
+        # Move the agent
         self.game.handle_action(action)
         
         # An episode is done iff the agent is hidden
@@ -132,20 +117,19 @@ class HideAndSeekEnv(gym.Env):
         if self.render_mode == "human":
             self._render_frame()
 
-        # self.game.render()
-
         return observation, reward, terminated, False, info
 
     def reset(self, seed=None, options=None):
+        """
+        Resets the environment to its initial state.
+        """
+
         # We need the following line to seed self.np_random
         super().reset(seed=seed)
         
 
         # init the game, placing agent and player uniformly at random
-        self.game.init_game()
-
-        self.done = False
-        self.reward = 0
+        self.game.init_game_start()
 
 
         observation = self._get_observation()
@@ -157,10 +141,17 @@ class HideAndSeekEnv(gym.Env):
         return observation, info
     
     def render(self):
+        """
+        Renders the current state of the environment.
+        """
         if self.render_mode == "rgb_array":
             return self._render_frame()
     
     def _render_frame(self):
+        """
+        Renders the current state of the environment.
+        Show the board in a window if render_mode is "human".
+        """
         board = self.game.render()
 
         if self.render_mode == "human":
