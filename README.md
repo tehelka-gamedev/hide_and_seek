@@ -23,7 +23,7 @@ Reinforcement learning (RL) environments must define four things:
 - the action space: the actions the agent can make. In our case there are four actions (go UP, LEFT, DOWN, or RIGHT)
 - the observation space: what the agent can see, the information it has to learn the task. Give not enough or way too much information and it will be hard or impossible for the AI to learn anything. 
 - a termination condition: when the task is considered done. In our case, the task is done when the agent is hidden from the player.
-- the reward given to the agent: the reward is the information given to the agent to tell him if he is doing good or not. The agent will try to maximise the reward. In our case, the reward is 10 if the agent is hidden (win), -1 for each step (to encourage the agent to finish the task quickly) if seen by the player.
+- the reward given to the agent: the reward is the information given to the agent to tell him if he is doing good or not. The agent will try to maximise the reward. In our case, the reward is 50 if the agent is hidden (win), -1 for each step (to encourage the agent to finish the task quickly) if seen by the player.
 
 The action space is fixed by our task. However, we can decide how we want to define our observation space. In other terms, **what information do we want to give to our AI?**. This way we can try to have our expected behaviour of hiding from the player..
 

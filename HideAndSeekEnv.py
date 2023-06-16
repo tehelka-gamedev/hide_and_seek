@@ -110,7 +110,7 @@ class HideAndSeekEnv(gym.Env):
         
         # An episode is done iff the agent is hidden
         terminated = not self.game.agent.is_seen
-        reward = 10 if terminated else -1
+        reward = 50 if terminated else -1
         observation = self._get_observation()
         info = self._get_info()
         
