@@ -21,8 +21,8 @@ def evaluate_agent() -> None:
         f"statement, few_walls or random. Default: {Maps.DEFAULT_MAP}."
         + " Map to use for training.")
         )
-    parser.add_argument("--nb_episodes", type=int, default=20, help=(
-        "Number of episodes to play. Default: 20.")
+    parser.add_argument("--nb_episodes", type=int, default=1000, help=(
+        "Number of episodes to play. Default: 1000.")
         )
     args = parser.parse_args()
 
