@@ -120,6 +120,13 @@ def learn() -> None:
     # timestep. We train the agent for args.timesteps timesteps in total.
     nb_timesteps = args.timesteps // args.save_interval
 
+    print(f"Training {model_name} with parameters:")
+    print(f"- Observation type: {str(observation_type)}")
+    print(f"- Map trained on: {args.map}")
+    print(f"- Learning rate: {args.learning_rate}")
+    print(f"- Learning starts: {args.learning_starts}")
+    print(f"- Exploration: {args.exploration}")
+
     for i in range(nb_timesteps):
         model.learn(
             total_timesteps=args.save_interval,
@@ -128,9 +135,11 @@ def learn() -> None:
             progress_bar=args.progress_bar,
             log_interval=args.log_interval,
         )
-        print("Timestep ", args.save_interval*(i+1))
+        if not args.progress_bar:
+            print(f"\rTimestep {args.save_interval*(i+1)}/{args.timesteps}", end="")
         model.save(f"{models_dir}/{args.save_interval*(i+1)}")
 
+    print()
 
     env.close()
 

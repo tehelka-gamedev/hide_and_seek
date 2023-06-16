@@ -48,6 +48,8 @@ class HideAndSeekEnv(gym.Env):
         self.render_mode = render_mode
 
         self.info = {}
+        self.steps = 0 # steps in the current episode, truncated after 300 steps
+        self.maximum_steps = 300
 
 
     def _create_observation_space(self, shape) -> spaces.Box:
@@ -104,12 +106,13 @@ class HideAndSeekEnv(gym.Env):
             if episode is truncated and a dictionary of info.
         """
 
-
+        self.steps+=1
         # Move the agent
         self.game.handle_action(action)
         
         # An episode is done iff the agent is hidden
         terminated = not self.game.agent.is_seen
+        truncated = self.steps >= self.maximum_steps and not terminated
         reward = 50 if terminated else -1
         observation = self._get_observation()
         info = self._get_info()
@@ -117,7 +120,7 @@ class HideAndSeekEnv(gym.Env):
         if self.render_mode == "human":
             self._render_frame()
 
-        return observation, reward, terminated, False, info
+        return observation, reward, terminated, truncated, info
 
     def reset(self, seed=None, options=None):
         """
@@ -131,6 +134,7 @@ class HideAndSeekEnv(gym.Env):
         # init the game, placing agent and player uniformly at random
         self.game.init_game_start()
 
+        self.steps = 0
 
         observation = self._get_observation()
         info = self._get_info()
