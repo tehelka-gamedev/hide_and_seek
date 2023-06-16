@@ -13,7 +13,7 @@ TODO
 TODO
 
 
-## Notes
+## Notes on the building of this AI
 
 Below are notes explaining all my thoughs that led to the building of this Hide and Seek AI.
 
