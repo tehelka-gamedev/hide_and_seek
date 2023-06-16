@@ -3,7 +3,7 @@ Run several episodes of the environment with random actions.
 Just to check that the environment is working as expected.
 """
 
-from hide_and_seek_env import HideAndSeekEnv
+from HideAndSeekEnv import HideAndSeekEnv
 env = HideAndSeekEnv("human")
 episodes = 10
 

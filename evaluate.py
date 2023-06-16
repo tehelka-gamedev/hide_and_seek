@@ -3,7 +3,7 @@ from stable_baselines3 import A2C, PPO, DQN
 from stable_baselines3.common.evaluation import evaluate_policy
 from stable_baselines3.common.monitor import Monitor
 
-from hide_and_seek_env import HideAndSeekEnv
+from HideAndSeekEnv import HideAndSeekEnv
 from ObservationType import (BasicObservation,
                              ImmediateSuroundingsObservation,
                              LongViewObservation

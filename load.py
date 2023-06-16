@@ -1,7 +1,7 @@
 import gymnasium as gym
 from stable_baselines3 import A2C, PPO, DQN
 
-from hide_and_seek_env import HideAndSeekEnv
+from HideAndSeekEnv import HideAndSeekEnv
 from ObservationType import (BasicObservation,
                              ImmediateSuroundingsObservation,
                              LongViewObservation

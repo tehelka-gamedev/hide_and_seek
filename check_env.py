@@ -1,5 +1,5 @@
 from stable_baselines3.common.env_checker import check_env
-from hide_and_seek_env import HideAndSeekEnv
+from HideAndSeekEnv import HideAndSeekEnv
 
 
 env = HideAndSeekEnv()
