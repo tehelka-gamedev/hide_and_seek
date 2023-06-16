@@ -204,15 +204,15 @@ We can also observe the high standard deviation of the reward, indicating the AI
 Again, the AI is not able to hide in the "random" map.
 
 
+To avoid overfitting, the AI could be trained on random maps instead of a single map. This was not explored in this project due to lack of time. But preliminary tests showed that the AI did not learn much more.
+
 ## Limitations
 
 This project has some limitations and could greatly be improved.
 - In its overall structure: code related to the game could be in one package, and code related to the AI in another package instead of being mixed together at the root of the project.
 - The AI training was made on a single map. It would be interesting to train the AI on random map instead, to see if it can learn to hide in any map.
+- The random map are not good for training or testing purposes. They are too random and the AI cannot learn anything from them. It would be better to have caracteristic maps, with a certain number of walls, a certain number of hiding places, etc.
 - **The AI evaluation should be made by fixing seeds for the random number generator, to have reproducible results and better comparison between the different models.**
 - The AI needed to have a realistic behaviour but this was unfortunately not explored.
 - Unit testing should be added to the project.
 - The player is not moving, making the test easier for the AI. The player could be moving randomly or searching for the agent to make the task harder. This is not explored in this project due to lack of time.
-
-
-## References
