@@ -6,7 +6,7 @@ import numpy as np
 import cv2
 import time
 from ObservationType import ObservationType, LongViewObservation
-
+import Maps
 
 class HideAndSeekEnv(gym.Env):
     """
@@ -14,7 +14,7 @@ class HideAndSeekEnv(gym.Env):
     """
     metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 4}
 
-    def __init__(self, render_mode=None, fps=30, map_name="statement",
+    def __init__(self, render_mode=None, fps=30, map_name=Maps.DEFAULT_MAP,
                  observation_type:ObservationType=None) -> None:
         """
         Initializes the environment.

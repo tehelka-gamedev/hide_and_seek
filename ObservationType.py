@@ -160,3 +160,6 @@ class LongViewObservation(ObservationType):
 
 
         return np.array(obs)
+
+    def __str__(self) -> str:
+        return self.__class__.__name__ + f"(view_size={self.view_size})"

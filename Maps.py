@@ -1,6 +1,7 @@
 # This file contains the maps used in the game.
 WALL = "#"
 EMPTY = "."
+DEFAULT_MAP = "statement"
 
 MAPS = {
 

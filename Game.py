@@ -14,7 +14,7 @@ class Game:
     Game class. Contains the grid, the player and the agent.
 
     """
-    def __init__(self, mode=None, map_name="statement") -> None:
+    def __init__(self, mode=None, map_name=Maps.DEFAULT_MAP) -> None:
         """
         Initialize the game
 
